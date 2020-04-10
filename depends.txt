@@ -1,2 +1,4 @@
 default
 tnt?
+doors?
+farming?
