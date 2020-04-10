@@ -7,6 +7,7 @@ It adds:
  -Net Bottle - Creates a trap of sticky nets, use this to slow down and confuse your opponent.
  -Net Trap - A sticky trap, use this during battle or a trap to protect your base.
  -Phantom Stone - A type of stone that you are able to go through... Like a ghost! Use this to make secret doors or traps.
+ -Hidden Trapdoor - Made with just some grass and a trapdoor, this blends in perfect with grassy landsacpes, use this for a hidden base hatch.
 Hope you enjoy this mod!
 --- LICENSE ---
 <starninjas> CC0 <2020>
