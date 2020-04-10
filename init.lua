@@ -20,6 +20,122 @@ minetest.register_craft({
 		{"", "default:stone", ""},
 	}
 })
+-- Hidden Trapdoor
+if minetest.get_modpath("doors") then
+xgadgets = {}
+xgadgets.registered_trapdoors = {}
+function xgadgets.trapdoor_toggle(pos, node, clicker)
+	node = node or minetest.get_node(pos)
+
+	if clicker and not default.can_interact_with_node(clicker, pos) then
+		return false
+	end
+
+	local def = minetest.registered_nodes[node.name]
+
+	if string.sub(node.name, -5) == "_open" then
+		minetest.sound_play(def.sound_close,
+			{pos = pos, gain = 0.3, max_hear_distance = 10})
+		minetest.swap_node(pos, {name = string.sub(node.name, 1,
+			string.len(node.name) - 5), param1 = node.param1, param2 = node.param2})
+	else
+		minetest.sound_play(def.sound_open,
+			{pos = pos, gain = 0.3, max_hear_distance = 10})
+		minetest.swap_node(pos, {name = node.name .. "_open",
+			param1 = node.param1, param2 = node.param2})
+	end
+end
+
+function xgadgets.register_trapdoor(name, def)
+	if not name:find(":") then
+		name = "xgadgets:" .. name
+	end
+
+	local name_closed = name
+	local name_opened = name.."_open"
+
+	def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		xgadgets.trapdoor_toggle(pos, node, clicker)
+		return itemstack
+	end
+
+	-- Common trapdoor configuration
+	def.drawtype = "nodebox"
+	def.paramtype = "light"
+	def.paramtype2 = "facedir"
+	def.is_ground_content = false
+
+	if not def.sounds then
+		def.sounds = default.node_sound_wood_defaults()
+	end
+
+	if not def.sound_open then
+		def.sound_open = "doors_door_open"
+	end
+
+	if not def.sound_close then
+		def.sound_close = "doors_door_close"
+	end
+
+	local def_opened = table.copy(def)
+	local def_closed = table.copy(def)
+
+	def_closed.node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 0.5, -6/16, 0.5}
+	}
+	def_closed.selection_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 0.5, -6/16, 0.5}
+	}
+	def_closed.tiles = {def.tile_front,
+			def.tile_front .. '^[transformFY',
+			def.tile_side, def.tile_side,
+			def.tile_side, def.tile_side}
+
+	def_opened.node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, 6/16, 0.5, 0.5, 0.5}
+	}
+	def_opened.selection_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, 6/16, 0.5, 0.5, 0.5}
+	}
+	def_opened.tiles = {def.tile_side, def.tile_side,
+			def.tile_side .. '^[transform3',
+			def.tile_side .. '^[transform1',
+			def.tile_front .. '^[transform46',
+			def.tile_front .. '^[transform6'}
+
+	def_opened.drop = name_closed
+	def_opened.groups.not_in_creative_inventory = 1
+
+	minetest.register_node(name_opened, def_opened)
+	minetest.register_node(name_closed, def_closed)
+
+	xgadgets.registered_trapdoors[name_opened] = true
+	xgadgets.registered_trapdoors[name_closed] = true
+end
+
+xgadgets.register_trapdoor("xgadgets:trapdoor", {
+	description = "Hidden Trapdoor",
+	inventory_image = "xgadgets_trapdoor.png",
+	wield_image = "xgadgets_trapdoor.png",
+	tile_front = "default_grass.png",
+	tile_side = "default_grass.png",
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, door = 1},
+})
+
+minetest.register_craft({
+	output = "xgadgets:trapdoor",
+	recipe = {
+		{"default:grass_1", "default:grass_1", "default:grass_1"},
+		{"default:grass_1", "doors:trapdoor", "default:grass_1"},
+		{"default:grass_1", "default:grass_1", "default:grass_1"},
+	}
+})
+end
+
 --- THROWABLE GADGETS ---
 -- Function to make bottles that are throwable and place blocks
 function xgadgets_register_throwable(name, descr, def)
@@ -194,7 +310,6 @@ xgadgets_bottle.on_step = function(self, dtime, pos)
 	self.lastpos= {x = pos.x, y = pos.y, z = pos.z}
 
 end
-
 minetest.register_entity("xgadgets:bottle", xgadgets_bottle)
 -- Smoke Bottle
 minetest.register_entity("xgadgets:smoke", {
@@ -289,6 +404,7 @@ minetest.register_craft({
 })
 end
 --- TRAP GADGETS ---
+if minetest.get_modpath("farming") then
 minetest.register_node("xgadgets:net_trap", {
 	description = "Net Trap",
 	paramtype = "light",
@@ -303,6 +419,7 @@ minetest.register_node("xgadgets:net_trap", {
 	liquid_range = 0,
 	walkable = false,
     sunlight_propagates = true,
+	drop = "farming:string 3",
 	selection_box = {type = "regular"},
 	groups = {oddly_breakable_by_hand=1, snappy=2, liquid=3, flammable=3},
 	sounds = default.node_sound_leaves_defaults()
@@ -315,3 +432,4 @@ minetest.register_craft({
 		{"farming:string", "", "farming:string"},
 	}
 })
+end
