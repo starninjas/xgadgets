@@ -142,6 +142,7 @@ function xgadgets_register_throwable(name, descr, def)
     minetest.register_craftitem("xgadgets:"..name.."_bottle", {
         description = descr,
 		physical = true,
+		stack_max = 1,
         inventory_image = "xgadgets_" ..name.."_bottle.png",
         on_use = function(itemstack, placer, pointed_thing)
             --weapons_shot(itemstack, placer, pointed_thing, def.velocity, name)
@@ -341,12 +342,10 @@ minetest.register_entity("xgadgets:smoke", {
 		)
 	end,
 })
-minetest.register_node("xgadgets:smoke_bottle", {
+minetest.register_craftitem("xgadgets:smoke_bottle", {
 	description = "Smoke Bottle",
-	drawtype = "plantlike",
-	tiles = {"xgadgets_smoke_bottle.png"},
+	inventory_image = "xgadgets_smoke_bottle.png",
 	wield_image = "xgadgets_smoke_bottle.png",
-	paramtype = "light",
 	stack_max = 1,
 	is_ground_content = false,
 	walkable = false,
