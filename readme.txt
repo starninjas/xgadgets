@@ -10,6 +10,6 @@ It adds:
 Hope you enjoy this mod!
 --- LICENSE ---
 <starninjas> CC0 <2020>
-All textures are mine, bottle code somewhat adapted from: rangedweapons, witchcraft and nssm.
+All textures are mine, bottle code somewhat adapted from: rangedweapons, witchcraft and nssm. And Hidden trapdoor is of course adapted from the doors mod.
 Phantom Stone code is mine.
 
